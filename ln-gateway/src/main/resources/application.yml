@@ -1,0 +1,28 @@
+server:
+  port: 9800
+spring:
+  application:
+    name: ln-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: ln-consumer
+          uri: lb://ln-consumer
+          predicates:
+            - Path=/provinder/**
+          filters:
+            - StripPrefix=1
+        # CORS跨越配置
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*" # 开发环境设置为*，生产环境设置为域名
+            allowedHeaders: "*"
+            allowedMethods:
+              - GET
+              - OPTION
+              - POST
+              - DELETE
+              - PUT
+system:
+  ignorePath:

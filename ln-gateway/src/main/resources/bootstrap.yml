@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: ln-gateway
+  cloud:
+    nacos:
+      config:
+        file-extension: yaml
+        group: LN_GROUP
+        server-addr: 127.0.0.1:8848
+      discovery:
+        group: LN_GROUP
+        server-addr: 127.0.0.1:8848
