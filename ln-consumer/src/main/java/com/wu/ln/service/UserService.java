@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(value = "ln-provider", fallback = UserServiceFailCallBack.class)
+@FeignClient(value = "ln-user-provider", fallback = UserServiceFailCallBack.class)
 @Component
 public interface UserService {
 

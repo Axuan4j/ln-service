@@ -1,5 +1,6 @@
 package com.wu.ln.gateway.filter;
 
+import cn.hutool.core.util.StrUtil;
 import com.wu.ln.gateway.config.SystemConfiguration;
 import com.wu.ln.gateway.util.AppObjectMapper;
 import com.wu.ln.gateway.util.CreateR;
@@ -36,6 +37,9 @@ public class ServiceAuthorizationStatusFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String[] ignorePath = systemConfiguration.getIgnorePath();
         String requestPath = exchange.getRequest().getPath().value();
+        if (StrUtil.isNotBlank(systemConfiguration.getUserServiceIgnorePrefix()) && requestPath.startsWith(systemConfiguration.getUserServiceIgnorePrefix())) {
+            return chain.filter(exchange);
+        }
         Optional<String> filterResult = Arrays.stream(ignorePath).filter(path -> path.equals(requestPath)).findFirst();
         if (filterResult.isPresent()) {
             return chain.filter(exchange);

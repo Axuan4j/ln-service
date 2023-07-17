@@ -7,10 +7,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ln-provider</artifactId>
+    <artifactId>ln-news-provider</artifactId>
     <packaging>jar</packaging>
 
-    <name>ln-provider</name>
+    <name>ln-news-provider</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

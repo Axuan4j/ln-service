@@ -11,9 +11,10 @@
 
     <modules>
         <module>base-common</module>
-        <module>ln-provider</module>
         <module>ln-consumer</module>
         <module>ln-gateway</module>
+        <module>ln-user-provider</module>
+        <module>ln-news-provider</module>
     </modules>
 
     <properties>
@@ -69,6 +70,7 @@
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
+                <scope>runtime</scope>
                 <version>8.0.32</version>
             </dependency>
 

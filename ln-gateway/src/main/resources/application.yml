@@ -9,10 +9,10 @@ spring:
         - id: ln-consumer
           uri: lb://ln-consumer
           predicates:
-            - Path=/provinder/**
+            - Path=/ln-service/**
           filters:
             - StripPrefix=1
-        # CORS跨越配置
+       # CORS跨越配置
       globalcors:
         cors-configurations:
           '[/**]':

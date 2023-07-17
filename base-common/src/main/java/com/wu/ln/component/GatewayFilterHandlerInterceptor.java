@@ -23,7 +23,6 @@ public class GatewayFilterHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        logger.info("GatewayFilter preHandle");
         String gatewayFilter = request.getHeader(SystemConstant.GATEWAY_FILTER_KEY);
         if (!StringUtils.hasText(gatewayFilter)) {
             R<String> forbidden = CreateR.createCustomResult(403, "forbidden");

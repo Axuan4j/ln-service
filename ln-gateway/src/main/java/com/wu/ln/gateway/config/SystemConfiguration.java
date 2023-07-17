@@ -9,11 +9,22 @@ public class SystemConfiguration {
     @Value("${gateway.ignorePath:}")
     private String[] ignorePath;
 
+    @Value("${gateway.userServiceIgnorePrefix:/userProvinder/user}")
+    private String userServiceIgnorePrefix;
+
     public String[] getIgnorePath() {
         return ignorePath;
     }
 
     public void setIgnorePath(String[] ignorePath) {
         this.ignorePath = ignorePath;
+    }
+
+    public String getUserServiceIgnorePrefix() {
+        return userServiceIgnorePrefix;
+    }
+
+    public void setUserServiceIgnorePrefix(String userServiceIgnorePrefix) {
+        this.userServiceIgnorePrefix = userServiceIgnorePrefix;
     }
 }

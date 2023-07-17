@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ln-provider
+    name: ln-news-provider
   cloud:
     nacos:
       discovery:
@@ -10,4 +10,4 @@ spring:
         server-addr: 127.0.0.1:8848
         file-extension: yaml
         group: LN_GROUP
-        name: ln-provider
+        name: ln-news-provider
