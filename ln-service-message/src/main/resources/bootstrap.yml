@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: ln-service-message
+  cloud:
+    nacos:
+      discovery:
+        group: LN_GROUP
+        server-addr: 127.0.0.1:8848
+        namespace: eaf487d1-9f84-41a3-9d29-eb71ddb370d0
+      config:
+        group: LN_GROUP
+        server-addr: 127.0.0.1:8848
+        namespace: eaf487d1-9f84-41a3-9d29-eb71ddb370d0

@@ -1,6 +1,7 @@
 package com.wu.ln.component;
 
 import com.wu.ln.bo.R;
+import com.wu.ln.exceptions.AbstractApplicationException;
 import com.wu.ln.exceptions.AuthorizedException;
 import com.wu.ln.util.CreateR;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,11 +39,20 @@ public class ServiceExceptionHandler {
             }
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             return CreateR.createCustomResult(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase() + ":" + errMsg, null);
+        } else if (e instanceof AbstractApplicationException abstractApplicationException) {
+            return commonErrorProcess(request, response, abstractApplicationException);
         }
 
         printRequest(request, "服务端未识别异常:" + e.getMessage());
         response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         return CreateR.createCustomResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase() + ":" + e.getMessage(), null);
+    }
+
+    private R<?> commonErrorProcess(HttpServletRequest request, HttpServletResponse response, AbstractApplicationException e) {
+        printRequest(request, e.getExceptionName() + ":" + e.getMessage());
+        response.setStatus(e.getCode());
+        return CreateR.createCustomResult(e.getCode(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase() + ":" + e.getMessage(), null);
+
     }
 
     private void printRequest(HttpServletRequest request, String err) {

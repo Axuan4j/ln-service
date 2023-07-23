@@ -6,6 +6,8 @@ public abstract class AbstractApplicationException extends RuntimeException {
 
     private final String message;
 
+    public abstract String getExceptionName();
+
     public AbstractApplicationException(String message, int code) {
         super(message);
         this.code = code;

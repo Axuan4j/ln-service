@@ -4,17 +4,18 @@
 
     <groupId>com.wu.ln</groupId>
     <artifactId>ln-service</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
 
     <name>ln-service</name>
 
     <modules>
         <module>base-common</module>
-        <module>ln-consumer</module>
         <module>ln-gateway</module>
-        <module>ln-user-provider</module>
-        <module>ln-news-provider</module>
+        <module>ln-service-message</module>
+        <module>ln-service-user</module>
+        <module>ln-service-news</module>
+        <module>ln-service-authorization</module>
     </modules>
 
     <properties>
@@ -24,9 +25,18 @@
         <spring-cloud-alibaba.version>2022.0.0.0-RC2</spring-cloud-alibaba.version>
         <java.version>20</java.version>
         <hutool.version>5.8.18</hutool.version>
-        <project.version>1.0-SNAPSHOT</project.version>
         <fastjson2.version>2.0.26</fastjson2.version>
         <jjwt.version>0.9.1</jjwt.version>
+        <revision>1.0-SNAPSHOT</revision>
+        <kaptcha.version>2.3.2</kaptcha.version>
+        <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
+        <druid-boot.version>1.2.16</druid-boot.version>
+        <mysql.version>8.0.32</mysql.version>
+        <jwt.version>3.10.3</jwt.version>
+        <google.qrcode.version>3.3.3</google.qrcode.version>
+        <commons.lang.version>2.3</commons.lang.version>
+        <security-boot.version>3.1.2</security-boot.version>
+
 
         <maven.compiler.source>20</maven.compiler.source>
         <maven.compiler.target>20</maven.compiler.target>
@@ -66,30 +76,44 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- spring authorized server -->
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-oauth2-authorization-server</artifactId>
+                <version>1.1.1</version>
+            </dependency>
+
+
             <!-- db mysql -->
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <scope>runtime</scope>
-                <version>8.0.32</version>
+                <version>${mysql.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-starter</artifactId>
-                <version>1.2.16</version>
+                <version>${druid-boot.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>3.5.3.1</version>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-security</artifactId>
+                <version>${security-boot.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.wu.ln</groupId>
                 <artifactId>base-common</artifactId>
-                <version>${project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
@@ -101,7 +125,31 @@
             <dependency>
                 <groupId>com.auth0</groupId>
                 <artifactId>java-jwt</artifactId>
-                <version>3.10.3</version>
+                <version>${jwt.version}</version>
+            </dependency>
+
+            <!-- 验证码生成工具 -->
+            <dependency>
+                <groupId>com.github.penggle</groupId>
+                <artifactId>kaptcha</artifactId>
+                <version>${kaptcha.version}</version>
+            </dependency>
+
+            <!-- 二维码生成和解析 -->
+            <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>core</artifactId>
+                <version>${google.qrcode.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>javase</artifactId>
+                <version>${google.qrcode.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons.lang.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -119,5 +167,35 @@
             </snapshots>
         </repository>
     </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.2.7</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

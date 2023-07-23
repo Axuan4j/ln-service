@@ -1,14 +1,18 @@
 package com.wu.ln.util;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
+import cn.hutool.core.lang.UUID;
+import cn.hutool.json.JSONObject;
+import cn.hutool.jwt.JWT;
+import cn.hutool.jwt.JWTUtil;
+import cn.hutool.jwt.JWTValidator;
+import cn.hutool.jwt.signers.AlgorithmUtil;
+import cn.hutool.jwt.signers.JWTSigner;
+import cn.hutool.jwt.signers.JWTSignerUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
-import java.util.Map;
 
 public class JwtUtil {
 
@@ -30,18 +34,20 @@ public class JwtUtil {
         return instance;
     }
 
-    private static final String signPassword = "#asdfghjkl121380#";
+    private static final String signPassword = "SDFGjhdsfalshdfHFdsjkdsfds121232131afasdfac";
 
-    private static final long expiration = 1000 * 60 * 60 * 24;
+    private static final long expiration = 1000 * 60 * 60 * 24 * 3;
+
+    private final JWTSigner sign = JWTSignerUtil.createSigner(AlgorithmUtil.getId("HS256"), signPassword.getBytes());
 
     public String createToken(String userId) {
-        Map<String, Object> headers = Map.of("alg", "HS256", "typ", "JWT");
-        Algorithm algorithm = Algorithm.HMAC256(signPassword);
-        return JWT.create().withHeader(headers)
-                .withClaim("userId", userId)
-                .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + expiration))
-                .sign(algorithm);
+        return JWT.create().setHeader("alg", "HS256")
+                .setHeader("typ", "JWT")
+                .setPayload("userId", userId)
+                .setJWTId(UUID.randomUUID().toString())
+                .setIssuedAt(new Date())
+                .setExpiresAt(new Date(System.currentTimeMillis() + expiration))
+                .sign(sign);
     }
 
     public boolean verifyToken(String token) {
@@ -49,23 +55,24 @@ public class JwtUtil {
             return false;
         }
         try {
-            DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(signPassword)).build().verify(token);
-            Date expiration = decodedJWT.getExpiresAt();
-            if (expiration.after(new Date())) {
-                return true;
-            }
+            JWTValidator jwtValidator = JWTValidator.of(token);
+            jwtValidator.validateAlgorithm(sign);
+            jwtValidator.validateDate();
+            return true;
         } catch (Exception e) {
             logger.error("verifyToken exception: {}", e.getMessage());
         }
         return false;
     }
 
-    public String getUserId(String token) {
+    public JSONObject parseToken(String token) {
         try {
-            DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(signPassword)).build().verify(token);
-            return decodedJWT.getClaim("userId").asString();
+            boolean verify = JWTUtil.verify(token, signPassword.getBytes());
+            if (verify) {
+                return JWTUtil.parseToken(token).getPayloads();
+            }
         } catch (Exception e) {
-            logger.error("getUserId exception: {}", e.getMessage());
+            logger.error("parseToken exception: {}", e.getMessage());
         }
         return null;
     }
