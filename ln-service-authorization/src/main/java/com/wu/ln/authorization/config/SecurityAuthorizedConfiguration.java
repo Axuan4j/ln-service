@@ -27,7 +27,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 public class SecurityAuthorizedConfiguration {
 
     private static final String CUSTOM_CONSENT_PAGE_URI = "/oauth2/consent";
@@ -35,7 +35,6 @@ public class SecurityAuthorizedConfiguration {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
-        System.out.println("authorizationServerSecurityFilterChain 2");
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http
                 .getConfigurer(OAuth2AuthorizationServerConfigurer.class)
@@ -48,7 +47,6 @@ public class SecurityAuthorizedConfiguration {
                         (exceptions) -> exceptions
                                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
                 )
-                // Accept access tokens for User Info and/or Client Registration
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
         return http.build();
     }
@@ -56,18 +54,17 @@ public class SecurityAuthorizedConfiguration {
     @Bean
     @Order(1)
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        System.out.println("defaultSecurityFilterChain 1");
-        http.securityMatchers().requestMatchers("/**")
-                .and()
-                .authorizeHttpRequests(authorize -> authorize
+        http.authorizeHttpRequests(authorize -> authorize
                         // 配置放行的请求
-                        .requestMatchers("login", "/api/**").permitAll()
+                        .requestMatchers("/api/**", "/login").permitAll()
                         // 其他任何请求都需要认证
                         .anyRequest().authenticated()
                 )
+                .csrf().disable()
                 // 设置登录表单页面
-                .formLogin(formLoginConfigurer -> formLoginConfigurer.loginPage("/login").loginProcessingUrl("/login").permitAll());
-
+                .formLogin(formLogin ->
+                        formLogin.loginPage("/login")
+                );
         return http.build();
     }
 

@@ -2,6 +2,7 @@ package com.wu.ln.authorization.config;
 
 import com.wu.ln.component.GatewayFilterHandlerInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,5 +30,10 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public Jackson2ObjectMapperBuilderCustomizer objectMapperCustomizer() {
+        return builder -> builder.modules(new ObjectMapperConfig());
     }
 }

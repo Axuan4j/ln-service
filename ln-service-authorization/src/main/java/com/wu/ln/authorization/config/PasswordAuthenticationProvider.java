@@ -28,7 +28,7 @@ public class PasswordAuthenticationProvider implements AuthenticationProvider {
     /**
      * 认证逻辑
      *
-     * @param authentication 认证信息
+     * @param authentication  认证信息
      * @return 认证信息
      * @throws AuthenticationException 认证异常
      */
@@ -41,10 +41,8 @@ public class PasswordAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("用户已被禁用");
         }
         String hexPassword = DigestUtil.md5Hex(authentication.getCredentials().toString() + userDetails.getSafeCode());
-         // 对用户输入的密码进行加密
-        String encodeUserPassword = passwordEncoder.encode(hexPassword);
         // 密码验证
-        if (!passwordEncoder.matches(encodeUserPassword, userDetails.getPassword())) {
+        if (!passwordEncoder.matches(hexPassword, userDetails.getPassword())) {
             throw new BadCredentialsException("用户名密码不正确");
         }
         // 认证通过，返回认证信息
