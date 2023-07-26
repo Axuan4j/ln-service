@@ -15,6 +15,30 @@ public class AppUserDetail implements UserDetails {
 
     private Integer status;
 
+    private String phone;
+
+    private String email;
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getSafeCode() {
         return safeCode;
     }
@@ -67,6 +91,6 @@ public class AppUserDetail implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return status == 0;
+        return status == null || status == 0;
     }
 }

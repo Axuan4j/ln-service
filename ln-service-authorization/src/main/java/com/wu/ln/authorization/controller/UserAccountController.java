@@ -9,6 +9,7 @@ import com.wu.ln.bo.R;
 import com.wu.ln.exceptions.DateBaseException;
 import com.wu.ln.exceptions.ParamsException;
 import com.wu.ln.util.CreateR;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 
 @RestController
@@ -34,9 +37,12 @@ public class UserAccountController {
 
     private final RegisteredClientRepository registeredClientRepository;
 
-    public UserAccountController(AccountUserService accountUserService, RegisteredClientRepository registeredClientRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public UserAccountController(AccountUserService accountUserService, RegisteredClientRepository registeredClientRepository, PasswordEncoder passwordEncoder) {
         this.accountUserService = accountUserService;
         this.registeredClientRepository = registeredClientRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/register-user")
@@ -56,7 +62,7 @@ public class UserAccountController {
         // JWT（Json Web Token）的配置项：TTL、是否复用refreshToken等等
         TokenSettings tokenSettings = TokenSettings.builder()
                 // 令牌存活时间：30分钟
-                .accessTokenTimeToLive(Duration.ofMinutes(30))
+                .accessTokenTimeToLive(Duration.ofDays(1))
                 // 令牌可以刷新，重新获取
                 .reuseRefreshTokens(true)
                 // 刷新时间：30天（30天内当令牌过期时，可以用刷新令牌重新申请新令牌，不需要再认证）
@@ -71,7 +77,9 @@ public class UserAccountController {
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
                 // 客户端ID和密码
                 .clientId(StringUtils.hasText(clientVO.getClientId()) ? clientVO.getClientId() : RandomUtil.randomString(10))
-                .clientSecret("{noop}" + clientVO.getClientSecret())
+                .clientSecret(passwordEncoder.encode(clientVO.getClientSecret()))
+                .clientIdIssuedAt(Instant.now())
+                .clientSecretExpiresAt(Instant.now().plus(Duration.of(10, ChronoUnit.YEARS)))
                 // 授权方法
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 // 授权类型

@@ -87,16 +87,8 @@ public class AuthorizationConsentController {
                     "此应用程序将能够读取您的个人资料信息"
             );
             scopeDescriptions.put(
-                    "message.read",
-                    "此应用程序将能够读取您的信息"
-            );
-            scopeDescriptions.put(
-                    "message.write",
-                    "此应用程序将能够添加新信息, 它还可以编辑和删除现有信息"
-            );
-            scopeDescriptions.put(
-                    "other.scope",
-                    "这是范围描述的另一个范围示例"
+                    "email",
+                    "此应用程序将能够读取您的邮件"
             );
         }
 

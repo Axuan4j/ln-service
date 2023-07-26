@@ -11,4 +11,6 @@ public interface AccountUserService extends IService<UserAccountDB> {
     boolean checkUsername(String username);
 
     Integer register(UserVO userVO);
+
+    UserAccountDB loadUserByEmail(String email);
 }

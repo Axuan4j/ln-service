@@ -6,6 +6,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import com.wu.ln.authorization.sercurity.EmailAuthenticationSecurityConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -32,6 +33,12 @@ public class SecurityAuthorizedConfiguration {
 
     private static final String CUSTOM_CONSENT_PAGE_URI = "/oauth2/consent";
 
+    private final EmailAuthenticationSecurityConfig emailAuthenticationSecurityConfig;
+
+    public SecurityAuthorizedConfiguration(EmailAuthenticationSecurityConfig emailAuthenticationSecurityConfig) {
+        this.emailAuthenticationSecurityConfig = emailAuthenticationSecurityConfig;
+    }
+
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -56,15 +63,16 @@ public class SecurityAuthorizedConfiguration {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
                         // 配置放行的请求
-                        .requestMatchers("/api/**", "/login").permitAll()
+                        .requestMatchers("/api/**", "/login" , "/login/email").permitAll()
                         // 其他任何请求都需要认证
                         .anyRequest().authenticated()
                 )
                 .csrf().disable()
                 // 设置登录表单页面
                 .formLogin(formLogin ->
-                        formLogin.loginPage("/login")
-                );
+                        formLogin.loginPage("/login/email")
+                )
+                .apply(emailAuthenticationSecurityConfig);
         return http.build();
     }
 

@@ -2,13 +2,13 @@ package com.wu.ln.authorization.service.impl;
 
 import com.wu.ln.authorization.entity.AppUserDetail;
 import com.wu.ln.authorization.service.AccountUserService;
+import com.wu.ln.authorization.service.AllUserDetailService;
 import com.wu.ln.db.UserAccountDB;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service("authorizedUserService")
-public class AuthorizedUserServiceImpl implements UserDetailsService {
+public class AuthorizedUserServiceImpl implements AllUserDetailService {
 
     private final AccountUserService accountUserService;
 
@@ -27,6 +27,19 @@ public class AuthorizedUserServiceImpl implements UserDetailsService {
         appUserDetail.setPassword(userAccount.getPassword());
         appUserDetail.setStatus(userAccount.getStatus());
         appUserDetail.setSafeCode(userAccount.getSafeCode());
+        return appUserDetail;
+    }
+
+    @Override
+    public AppUserDetail loadUserByEmail(String email) {
+        UserAccountDB userAccountDB = accountUserService.loadUserByEmail(email);
+        if (userAccountDB == null) {
+            throw new UsernameNotFoundException("邮箱" + email + "不存在");
+        }
+        AppUserDetail appUserDetail = new AppUserDetail();
+        appUserDetail.setUsername(userAccountDB.getUserName());
+        appUserDetail.setEmail(userAccountDB.getEmail());
+        appUserDetail.setStatus(userAccountDB.getStatus());
         return appUserDetail;
     }
 }

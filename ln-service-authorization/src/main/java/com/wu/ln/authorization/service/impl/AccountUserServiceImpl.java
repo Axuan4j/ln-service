@@ -51,4 +51,11 @@ public class AccountUserServiceImpl extends ServiceImpl<UserMapper, UserAccountD
         userAccountDB.setCreateTime(DateUtil.now());
         return this.baseMapper.insert(userAccountDB);
     }
+
+    @Override
+    public UserAccountDB loadUserByEmail(String email) {
+        LambdaQueryWrapper<UserAccountDB> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserAccountDB::getEmail, email);
+        return this.getOne(queryWrapper);
+    }
 }
