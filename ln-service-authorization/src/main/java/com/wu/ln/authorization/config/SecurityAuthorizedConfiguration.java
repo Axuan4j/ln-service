@@ -63,7 +63,7 @@ public class SecurityAuthorizedConfiguration {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
                         // 配置放行的请求
-                        .requestMatchers("/api/**", "/login" , "/login/**").permitAll()
+                        .requestMatchers("/api/**", "/login" , "/login/**", "/css/**").permitAll()
                         // 其他任何请求都需要认证
                         .anyRequest().authenticated()
                 )
