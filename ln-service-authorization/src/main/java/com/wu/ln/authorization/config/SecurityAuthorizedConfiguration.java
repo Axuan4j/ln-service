@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
@@ -60,10 +61,12 @@ public class SecurityAuthorizedConfiguration {
 
     @Bean
     @Order(1)
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http,
+                                                   PasswordAuthenticationProvider passwordAuthenticationProvider
+    ) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
                         // 配置放行的请求
-                        .requestMatchers("/api/**", "/login" , "/login/**", "/css/**").permitAll()
+                        .requestMatchers("/api/**", "/login", "/login/**", "/css/**").permitAll()
                         // 其他任何请求都需要认证
                         .anyRequest().authenticated()
                 )
@@ -73,6 +76,8 @@ public class SecurityAuthorizedConfiguration {
                         formLogin.loginPage("/login")
                 )
                 .apply(emailAuthenticationSecurityConfig);
+        AuthenticationManagerBuilder sharedObject = http.getSharedObject(AuthenticationManagerBuilder.class);
+        sharedObject.authenticationProvider(passwordAuthenticationProvider);
         return http.build();
     }
 

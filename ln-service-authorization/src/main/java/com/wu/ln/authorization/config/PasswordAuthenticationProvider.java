@@ -46,7 +46,7 @@ public class PasswordAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("用户名密码不正确");
         }
         // 认证通过，返回认证信息
-        return new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(), userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, hexPassword, userDetails.getAuthorities());
 
     }
 
