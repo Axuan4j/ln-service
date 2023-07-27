@@ -63,14 +63,14 @@ public class SecurityAuthorizedConfiguration {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
                         // 配置放行的请求
-                        .requestMatchers("/api/**", "/login" , "/login/email").permitAll()
+                        .requestMatchers("/api/**", "/login" , "/login/**").permitAll()
                         // 其他任何请求都需要认证
                         .anyRequest().authenticated()
                 )
                 .csrf().disable()
                 // 设置登录表单页面
                 .formLogin(formLogin ->
-                        formLogin.loginPage("/login/email")
+                        formLogin.loginPage("/login")
                 )
                 .apply(emailAuthenticationSecurityConfig);
         return http.build();
