@@ -7,6 +7,8 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.wu.ln.authorization.sercurity.EmailAuthenticationSecurityConfig;
+import com.wu.ln.authorization.sercurity.FormAuthenticationFailHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -34,9 +36,17 @@ public class SecurityAuthorizedConfiguration {
 
     private static final String CUSTOM_CONSENT_PAGE_URI = "/oauth2/consent";
 
-    private final EmailAuthenticationSecurityConfig emailAuthenticationSecurityConfig;
+    private EmailAuthenticationSecurityConfig emailAuthenticationSecurityConfig;
 
-    public SecurityAuthorizedConfiguration(EmailAuthenticationSecurityConfig emailAuthenticationSecurityConfig) {
+    private FormAuthenticationFailHandler formAuthenticationFailHandler;
+
+    @Autowired
+    public void setFormAuthenticationFailHandler(FormAuthenticationFailHandler formAuthenticationFailHandler) {
+        this.formAuthenticationFailHandler = formAuthenticationFailHandler;
+    }
+
+    @Autowired
+    public void setEmailAuthenticationSecurityConfig(EmailAuthenticationSecurityConfig emailAuthenticationSecurityConfig) {
         this.emailAuthenticationSecurityConfig = emailAuthenticationSecurityConfig;
     }
 
@@ -61,12 +71,11 @@ public class SecurityAuthorizedConfiguration {
 
     @Bean
     @Order(1)
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http,
-                                                   PasswordAuthenticationProvider passwordAuthenticationProvider
-    ) throws Exception {
-        http.authorizeHttpRequests(authorize -> authorize
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, PasswordAuthenticationProvider passwordAuthenticationProvider) throws Exception {
+        http
+                .authorizeHttpRequests(authorize -> authorize
                         // 配置放行的请求
-                        .requestMatchers("/api/**", "/login", "/login/**", "/css/**").permitAll()
+                        .requestMatchers("/api/**", "/login", "/login/**", "/css/**", "/page/**", "/error").permitAll()
                         // 其他任何请求都需要认证
                         .anyRequest().authenticated()
                 )
@@ -74,6 +83,7 @@ public class SecurityAuthorizedConfiguration {
                 // 设置登录表单页面
                 .formLogin(formLogin ->
                         formLogin.loginPage("/login")
+                                .failureHandler(formAuthenticationFailHandler)
                 )
                 .apply(emailAuthenticationSecurityConfig);
         AuthenticationManagerBuilder sharedObject = http.getSharedObject(AuthenticationManagerBuilder.class);

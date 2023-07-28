@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 
 @RestController
@@ -79,7 +78,7 @@ public class UserAccountController {
                 .clientId(StringUtils.hasText(clientVO.getClientId()) ? clientVO.getClientId() : RandomUtil.randomString(10))
                 .clientSecret(passwordEncoder.encode(clientVO.getClientSecret()))
                 .clientIdIssuedAt(Instant.now())
-                .clientSecretExpiresAt(Instant.now().plus(Duration.of(10, ChronoUnit.YEARS)))
+                .clientSecretExpiresAt(null)
                 // 授权方法
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 // 授权类型

@@ -50,13 +50,14 @@ public class EmailAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("用户已被禁用");
         }
 
-        String redisCode = redisTemplate.opsForValue().get(email);
+        String mailKey = "email:code:" + email;
+        String redisCode = redisTemplate.opsForValue().get(mailKey);
         // 邮箱验证码验证
         if (!credentials.toString().equals(redisCode)) {
             throw new BadCredentialsException("邮箱验证码不正确");
         }
         // 认证通过，返回认证信息
-        return new EmailAuthenticationToken(userDetails, authentication.getCredentials(), userDetails.getAuthorities());
+        return new EmailAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
 
     }
 
