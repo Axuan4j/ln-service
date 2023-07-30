@@ -30,7 +30,9 @@ public class AuthorizationConsentController {
     public String consent(Principal principal, Model model,
                           @RequestParam(OAuth2ParameterNames.CLIENT_ID) String clientId,
                           @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
-                          @RequestParam(OAuth2ParameterNames.STATE) String state) {
+                          @RequestParam(OAuth2ParameterNames.STATE) String state,
+                          @RequestParam(OAuth2ParameterNames.RESPONSE_TYPE) String responseType,
+                          @RequestParam(OAuth2ParameterNames.REDIRECT_URI) String redirectUri) {
 
         // 要批准的范围和以前批准的范围
         Set<String> scopesToApprove = new HashSet<>();
@@ -65,8 +67,11 @@ public class AuthorizationConsentController {
         model.addAttribute("scopes", withDescription(scopesToApprove));
         model.addAttribute("previouslyApprovedScopes", withDescription(previouslyApprovedScopes));
         model.addAttribute("principalName", principal.getName());
-
-        return "consent";
+        model.addAttribute("clientName", registeredClient.getClientName());
+        model.addAttribute("redirectUri", redirectUri);
+        model.addAttribute("responseType", responseType);
+        return "access_approval";
+//        return "consent";
     }
 
     private static Set<ScopeWithDescription> withDescription(Set<String> scopes) {

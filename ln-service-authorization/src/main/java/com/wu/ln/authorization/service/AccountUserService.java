@@ -13,4 +13,6 @@ public interface AccountUserService extends IService<UserAccountDB> {
     Integer register(UserVO userVO);
 
     UserAccountDB loadUserByEmail(String email);
+
+
 }

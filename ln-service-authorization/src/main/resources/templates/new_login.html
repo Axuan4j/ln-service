@@ -1,0 +1,156 @@
+<!DOCTYPE HTML>
+<html lang="zxx">
+
+<head>
+    <title>Home</title>
+    <!-- Meta tag Keywords -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8"/>
+    <meta name="keywords" content=""/>
+    <script>
+        addEventListener("load", function () {
+            setTimeout(hideURLbar, 0);
+        }, false);
+
+        function hideURLbar() {
+            window.scrollTo(0, 1);
+        }
+    </script>
+    <!-- Meta tag Keywords -->
+    <!-- css files -->
+    <link rel="stylesheet" href="/css/style.css" type="text/css" media="all"/>
+    <!-- Style-CSS -->
+    <link href="/css/font-awesome.css" type="text/css" rel="stylesheet">
+    <!-- Font-Awesome-Icons-CSS -->
+    <!-- //css files -->
+</head>
+
+<body>
+<!-- bg effect -->
+<div id="bg">
+    <canvas></canvas>
+    <canvas></canvas>
+    <canvas></canvas>
+</div>
+<!-- //bg effect -->
+<!-- title -->
+<h1>LN登陆中心</h1>
+<!-- //title -->
+<!-- content -->
+<div class="sub-main-w3">
+    <form>
+        <h2>账号登录
+            <i class="fa fa-level-down-alt"></i>
+        </h2>
+        <div class="form-style-agile">
+            <label>
+                <i class="fa fa-user"></i>
+                用户名
+            </label>
+            <input placeholder="Username" id="username" name="Name" type="text" required>
+        </div>
+        <div class="form-style-agile">
+            <label>
+                <i class="fa fa-unlock-alt"></i>
+                密码
+            </label>
+            <input placeholder="Password" id="password" name="Password" type="password" required>
+        </div>
+        <!-- checkbox -->
+        <div class="wthree-text">
+            <ul>
+                <li>
+                    <a href="#">注册新账号</a>
+                </li>
+                <li>
+                    <a href="#">忘记密码</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="form-style-agile other-login">
+            <div class="login-item" onclick="redirect('/page/email-login')">
+                <i class="fa fa-envelope-o"></i><span>邮箱登陆</span>
+            </div>
+            <div class="login-item" onclick="redirect()"><i class="fa fa-qq"></i><span>QQ登陆</span></div>
+            <div class="login-item" onclick="redirect()"><i class="fa fa-github"></i><span>GitHub登陆</span></div>
+            <div class="login-item" onclick="redirect()"><i class="fa fa-weibo"></i><span>微博登陆</span></div>
+        </div>
+
+        <!-- //checkbox -->
+        <button type="button" class="submit" onclick="login()">点击登陆</button>
+    </form>
+</div>
+<!-- //content -->
+
+<!-- copyright -->
+<div class="footer">
+    <p>Copyright &copy; 2023.Company name All rights reserved.</p>
+</div>
+<!-- //copyright -->
+
+<!-- Jquery -->
+<script src="/js/jquery-3.3.1.min.js"></script>
+<!-- //Jquery -->
+
+<!-- effect js -->
+<script src="/js/canva_moving_effect.js"></script>
+<!-- //effect js -->
+
+<script type="text/javascript" src="/js/layer/layer.js"></script>
+<script type="text/javascript" src="/js/axios.js"></script>
+<script type="text/javascript" src="/js/qs.js"></script>
+<script>
+
+    axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
+    axios.defaults.baseURL = 'http://localhost:9700';
+    axios.defaults.withCredentials = true;
+    axios.defaults.timeout = 5000;
+
+    function login() {
+        let username = document.querySelector("#username").value;
+        let password = document.querySelector("#password").value;
+
+        if (!username) {
+            layer.msg("请输入用户名", {icon: 5});
+            return;
+        }
+
+        if (!password) {
+            layer.msg("请输入密码", {icon: 5});
+            return;
+        }
+
+        let data = {
+            username: username,
+            password: password
+        };
+
+        axios.post('/login', Qs.stringify(data)).then(res => {
+            if (res.status !== 200) {
+                layer.msg("登录失败", {icon: 5});
+                return;
+            }
+            let data = res.data['data'];
+            if (data) {
+                location.href = "/oauth2/consent?client_id=" + data['client_id'] + "&scope=" + data['scope'] + "&state=" + data['state'] + "&redirect_uri=" + data['redirect_uri'] + "&response_type=" + data['response_type'];
+            } else {
+                location.href = "/index";
+            }
+        }).catch(err => {
+            layer.msg("登录失败", {icon: 5});
+            console.log(err);
+        })
+    }
+
+    function redirect(path) {
+        if (!path) {
+            layer.msg("该功能暂未开放", {icon: 5});
+            return;
+        }
+        window.location.href = path;
+    }
+</script>
+</body>
+
+</html>

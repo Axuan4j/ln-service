@@ -1,4 +1,4 @@
-package com.wu.ln.authorization.config;
+package com.wu.ln.authorization.sercurity;
 
 import cn.hutool.crypto.digest.DigestUtil;
 import com.wu.ln.authorization.entity.AppUserDetail;
@@ -13,14 +13,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PasswordAuthenticationProvider implements AuthenticationProvider {
+public class FormAuthenticationProvider implements AuthenticationProvider {
 
 
     private final UserDetailsService userDetailsService;
 
     private final PasswordEncoder passwordEncoder;
 
-    public PasswordAuthenticationProvider(PasswordEncoder passwordEncoder, @Qualifier("authorizedUserService") UserDetailsService userDetailsService) {
+    public FormAuthenticationProvider(PasswordEncoder passwordEncoder, @Qualifier("authorizedUserService") UserDetailsService userDetailsService) {
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
     }

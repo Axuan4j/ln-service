@@ -8,6 +8,8 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.wu.ln.authorization.sercurity.EmailAuthenticationSecurityConfig;
 import com.wu.ln.authorization.sercurity.FormAuthenticationFailHandler;
+import com.wu.ln.authorization.sercurity.FormAuthenticationProvider;
+import com.wu.ln.authorization.sercurity.FormAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
@@ -40,10 +43,18 @@ public class SecurityAuthorizedConfiguration {
 
     private FormAuthenticationFailHandler formAuthenticationFailHandler;
 
+    private FormAuthenticationSuccessHandler formAuthenticationSuccessHandler;
+
     @Autowired
     public void setFormAuthenticationFailHandler(FormAuthenticationFailHandler formAuthenticationFailHandler) {
         this.formAuthenticationFailHandler = formAuthenticationFailHandler;
     }
+
+    @Autowired
+    public void setFormAuthenticationSuccessHandler(FormAuthenticationSuccessHandler formAuthenticationSuccessHandler) {
+        this.formAuthenticationSuccessHandler = formAuthenticationSuccessHandler;
+    }
+
 
     @Autowired
     public void setEmailAuthenticationSecurityConfig(EmailAuthenticationSecurityConfig emailAuthenticationSecurityConfig) {
@@ -71,25 +82,41 @@ public class SecurityAuthorizedConfiguration {
 
     @Bean
     @Order(1)
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, PasswordAuthenticationProvider passwordAuthenticationProvider) throws Exception {
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, FormAuthenticationProvider passwordAuthenticationProvider) throws Exception {
+        AuthenticationManagerBuilder sharedObject = http.getSharedObject(AuthenticationManagerBuilder.class);
+        sharedObject.authenticationProvider(passwordAuthenticationProvider);
         http
                 .authorizeHttpRequests(authorize -> authorize
                         // 配置放行的请求
-                        .requestMatchers("/api/**", "/login", "/login/**", "/css/**", "/page/**", "/error").permitAll()
+                        .requestMatchers("/api/**", "/page/**").permitAll()
                         // 其他任何请求都需要认证
                         .anyRequest().authenticated()
                 )
-                .csrf().disable()
                 // 设置登录表单页面
                 .formLogin(formLogin ->
-                        formLogin.loginPage("/login")
+                        formLogin.loginPage("/login").permitAll()
                                 .failureHandler(formAuthenticationFailHandler)
+                                .successHandler(formAuthenticationSuccessHandler)
                 )
-                .apply(emailAuthenticationSecurityConfig);
-        AuthenticationManagerBuilder sharedObject = http.getSharedObject(AuthenticationManagerBuilder.class);
-        sharedObject.authenticationProvider(passwordAuthenticationProvider);
+                .apply(emailAuthenticationSecurityConfig)
+                .and()
+                .csrf().disable();
         return http.build();
     }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring()
+                .requestMatchers("/error")
+                .requestMatchers("/favicon.ico")
+                .requestMatchers("/css/**")
+                .requestMatchers("/js/**")
+                .requestMatchers("/fonts/**")
+                .requestMatchers("/static/**")
+                .requestMatchers("/resources/**")
+                .requestMatchers("/webjars/**");
+    }
+
 
     @Bean
     public JWKSource<SecurityContext> jwkSource() {

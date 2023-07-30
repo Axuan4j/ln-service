@@ -1,8 +1,7 @@
-package com.wu.ln.authorization.config;
+package com.wu.ln.authorization.sercurity;
 
 import cn.hutool.core.util.StrUtil;
 import com.wu.ln.authorization.entity.AppUserDetail;
-import com.wu.ln.authorization.sercurity.EmailAuthenticationToken;
 import com.wu.ln.authorization.service.AllUserDetailService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -10,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -49,7 +49,6 @@ public class EmailAuthenticationProvider implements AuthenticationProvider {
         if (!userDetails.isEnabled()) {
             throw new BadCredentialsException("用户已被禁用");
         }
-
         String mailKey = "email:code:" + email;
         String redisCode = redisTemplate.opsForValue().get(mailKey);
         // 邮箱验证码验证
@@ -57,8 +56,13 @@ public class EmailAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("邮箱验证码不正确");
         }
         // 认证通过，返回认证信息
-        return new EmailAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
+        return createEmailAuthenticationToken(authentication, userDetails);
+    }
 
+    public EmailAuthenticationToken createEmailAuthenticationToken(Authentication authentication, UserDetails userDetails) {
+        EmailAuthenticationToken emailAuthenticationToken = new EmailAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        emailAuthenticationToken.setDetails(authentication.getDetails());
+        return emailAuthenticationToken;
     }
 
     /**
