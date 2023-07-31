@@ -42,3 +42,4 @@ build/
 /rabbitmq/
 .idea/
 **/.flattened-pom.xml
+.flattened-pom.xml

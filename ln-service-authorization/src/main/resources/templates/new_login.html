@@ -131,12 +131,7 @@
                 layer.msg("登录失败", {icon: 5});
                 return;
             }
-            let data = res.data['data'];
-            if (data) {
-                location.href = "/oauth2/consent?client_id=" + data['client_id'] + "&scope=" + data['scope'] + "&state=" + data['state'] + "&redirect_uri=" + data['redirect_uri'] + "&response_type=" + data['response_type'];
-            } else {
-                location.href = "/index";
-            }
+            window.location.href = res.data['data'];
         }).catch(err => {
             layer.msg("登录失败", {icon: 5});
             console.log(err);

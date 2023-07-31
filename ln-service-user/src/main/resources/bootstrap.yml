@@ -1,3 +1,4 @@
+
 spring:
   application:
     name: ln-service-user
@@ -15,3 +16,8 @@ spring:
     sentinel:
       transport:
         dashboard: localhost:8080 #配置Sentinel dashboard地址
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9700
