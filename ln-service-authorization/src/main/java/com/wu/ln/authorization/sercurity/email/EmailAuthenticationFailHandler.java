@@ -1,4 +1,4 @@
-package com.wu.ln.authorization.sercurity;
+package com.wu.ln.authorization.sercurity.email;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wu.ln.util.CreateR;

@@ -1,4 +1,4 @@
-package com.wu.ln.authorization.sercurity;
+package com.wu.ln.authorization.sercurity.form;
 
 import cn.hutool.crypto.digest.DigestUtil;
 import com.wu.ln.authorization.entity.AppUserDetail;

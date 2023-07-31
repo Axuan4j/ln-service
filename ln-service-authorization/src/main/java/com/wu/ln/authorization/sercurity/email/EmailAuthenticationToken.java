@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.wu.ln.authorization.sercurity;
+package com.wu.ln.authorization.sercurity.email;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

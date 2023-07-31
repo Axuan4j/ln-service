@@ -24,5 +24,26 @@ spring:
               - POST
               - DELETE
               - PUT
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          ln:
+#            client-name: LN社区
+#            client-id: test1
+#            redirect-uri: http://127.0.0.1:9800/login/oauth2/code/test1
+#            client-secret: test123456
+#            scope:
+#              - oidc
+#              - profile
+#              - email
+#            authorization-grant-type: refresh_token,client_credentials,authorization_code
+#            client-authentication-method: client_secret_basic
+#        provider:
+#          ln:
+#            authorization-uri: http://127.0.0.1:9700/oauth2/authorize
+#            token-uri: http://127.0.0.1:9700/oauth2/token
+#            user-info-uri: http://127.0.0.1:9700/userinfo
+#            jwk-set-uri: http://127.0.0.1:9700/oauth2/jwks
 system:
   ignorePath:

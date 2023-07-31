@@ -1,4 +1,4 @@
-package com.wu.ln.authorization.sercurity;
+package com.wu.ln.authorization.sercurity.email;
 
 import cn.hutool.core.util.StrUtil;
 import com.wu.ln.authorization.entity.AppUserDetail;

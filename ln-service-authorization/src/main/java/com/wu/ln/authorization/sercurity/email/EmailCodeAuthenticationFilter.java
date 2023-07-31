@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.wu.ln.authorization.sercurity;
+package com.wu.ln.authorization.sercurity.email;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

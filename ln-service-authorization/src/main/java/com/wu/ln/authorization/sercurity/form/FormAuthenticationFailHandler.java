@@ -1,4 +1,4 @@
-package com.wu.ln.authorization.sercurity;
+package com.wu.ln.authorization.sercurity.form;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.wu.ln.bo.R;

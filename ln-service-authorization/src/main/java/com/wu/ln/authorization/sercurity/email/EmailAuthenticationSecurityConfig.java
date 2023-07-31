@@ -1,4 +1,4 @@
-package com.wu.ln.authorization.sercurity;
+package com.wu.ln.authorization.sercurity.email;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
