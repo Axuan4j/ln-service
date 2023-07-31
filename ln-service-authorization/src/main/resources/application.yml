@@ -2,6 +2,9 @@
 server:
   port: 9700
 spring:
+  session:
+    redis:
+      repository-type: default
   application:
     name: ln-service-authorization
   datasource:
