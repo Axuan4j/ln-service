@@ -1,0 +1,108 @@
+<!DOCTYPE HTML>
+<html lang="zh" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <title>Home</title>
+    <!-- Meta tag Keywords -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8"/>
+    <meta name="keywords" content=""/>
+    <script>
+        addEventListener("load", function () {
+            setTimeout(hideURLbar, 0);
+        }, false);
+
+        function hideURLbar() {
+            window.scrollTo(0, 1);
+        }
+    </script>
+    <!-- Meta tag Keywords -->
+    <!-- css files -->
+    <link rel="stylesheet" href="/css/style.css" type="text/css" media="all"/>
+    <!-- Style-CSS -->
+    <link href="/css/font-awesome.css" type="text/css" rel="stylesheet">
+    <!-- Font-Awesome-Icons-CSS -->
+    <!-- //css files -->
+</head>
+
+<body>
+<!-- bg effect -->
+<div id="bg">
+    <canvas></canvas>
+    <canvas></canvas>
+    <canvas></canvas>
+</div>
+<!-- //bg effect -->
+<!-- title -->
+<h1>LN登陆中心</h1>
+<!-- //title -->
+<!-- content -->
+<div class="sub-main-w3">
+    <form method="post" th:action="@{/oauth2/authorize}">
+        <input type="hidden" name="client_id" th:value="${clientId}">
+        <input type="hidden" name="state" th:value="${state}">
+        <input type="hidden" name="redirect_uri" th:value="${redirectUri}">
+        <input type="hidden" name="response_type" th:value="${responseType}">
+
+        <h2>应用程序权限</h2>
+        <div class="form-style-agile">
+            <label>
+                应用程序
+                <th:block th:text="${clientName}"/>
+                想要访问您的帐户
+                <th:block th:text="${principalName}"/>
+            </label>
+        </div>
+        <!-- checkbox -->
+
+        <div class="form-style-agile">
+            <label>上述应用程序请求以下权限,如果您批准，请查看这些并同意</label>
+            <br/>
+            <th:block th:each="scope : ${scopes}">
+                <label>
+                    <i class="fa fa-angle-double-right"></i>
+                    <input type="checkbox" name="scope" th:value="${scope.scope}">
+                    <th:block th:text="${scope.description}"/>
+                </label>
+            </th:block>
+            <th:block th:each="scope : ${previouslyApprovedScopes}">
+                <label>
+                    <i class="fa fa-angle-double-right"></i>
+                    <input type="checkbox" name="scope" th:value="${scope.scope}" checked>
+                    <th:block th:text="${scope.description}"/>
+                </label>
+            </th:block>
+        </div>
+
+        <!-- //checkbox -->
+        <button type="button" onclick="toSubmit()" class="submit">确认授权</button>
+    </form>
+</div>
+<!-- //content -->
+
+<!-- copyright -->
+<div class="footer">
+    <p>Copyright &copy; 2023.Company name All rights reserved.</p>
+</div>
+<script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/js/canva_moving_effect.js"></script>
+<script type="text/javascript" src="/js/layer/layer.js"></script>
+<script>
+    function toSubmit() {
+        let clientId = $("input[name=client_id]").val();
+        let state = $("input[name=state]").val();
+        let redirectUri = $("input[name=redirect_uri]").val();
+        let responseType = $("input[name=response_type]").val();
+        let $scope = $("input[name=scope]");
+        let scopes = [];
+        $scope.each((item, index) => {
+            if ($(item).is(":checked")) {
+                scopes.push(item.value);
+            }
+        })
+        window.location.href = "/oauth2/authorize?client_id=" + clientId + "&state=" + state + "&redirect_uri=" + redirectUri + "&response_type=" + responseType + "&scope=" + scopes.join(" ");
+    }
+</script>
+</body>
+
+</html>

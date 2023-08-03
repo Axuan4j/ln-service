@@ -1,13 +1,10 @@
 package com.wu.ln.user.service;
 
-import com.wu.ln.bo.R;
-import com.wu.ln.user.entity.UserVO;
-import org.springframework.web.bind.annotation.RequestParam;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.wu.ln.db.UserAccountDB;
+import com.wu.ln.user.entity.UserServiceDetail;
 
-public interface UserService {
+public interface UserService extends IService<UserAccountDB> {
 
-    R<String> sayHello(@RequestParam String name);
-
-    R<String> login(UserVO userVO);
-
+    UserServiceDetail loadUserByUsername(String username);
 }

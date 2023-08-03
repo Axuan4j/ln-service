@@ -1,0 +1,188 @@
+<!DOCTYPE HTML>
+<html lang="zxx">
+
+<head>
+    <title>Home</title>
+    <!-- Meta tag Keywords -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8"/>
+    <meta name="keywords" content=""/>
+    <script>
+        addEventListener("load", function () {
+            setTimeout(hideURLbar, 0);
+        }, false);
+
+        function hideURLbar() {
+            window.scrollTo(0, 1);
+        }
+    </script>
+    <!-- Meta tag Keywords -->
+    <!-- css files -->
+    <link rel="stylesheet" href="/css/style.css" type="text/css" media="all"/>
+    <!-- Style-CSS -->
+    <link href="/css/font-awesome.css" type="text/css" rel="stylesheet">
+    <!-- Font-Awesome-Icons-CSS -->
+    <!-- //css files -->
+</head>
+
+<body>
+<!-- bg effect -->
+<div id="bg">
+    <canvas></canvas>
+    <canvas></canvas>
+    <canvas></canvas>
+</div>
+<!-- //bg effect -->
+<!-- title -->
+<h1>LN登陆中心</h1>
+<!-- //title -->
+<!-- content -->
+<div class="sub-main-w3">
+    <form>
+        <h2>邮箱验证码登录
+            <i class="fa fa-level-down-alt"></i>
+        </h2>
+        <div class="form-style-agile">
+            <label>
+                <i class="fa fa-user"></i>
+                邮箱地址
+            </label>
+            <input placeholder="Email" id="email" name="email" type="text">
+        </div>
+        <div class="form-style-agile">
+            <label>
+                <i class="fa fa-unlock-alt"></i>
+                验证码
+            </label>
+            <div style="width: 100%; display: flex; justify-content: space-between">
+                <input placeholder="Verification Code" id="code" name="code" style="width: 60%" type="number">
+                <button type="button" class="submit" onclick="sendEmailCode()" style="width: 35%; margin-top: 0">
+                    发送验证码
+                </button>
+            </div>
+        </div>
+        <!-- checkbox -->
+        <div class="wthree-text">
+            <ul>
+                <li>
+                    <a href="#">注册新账号</a>
+                </li>
+                <li>
+                    <a href="#">忘记密码</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="form-style-agile other-login">
+            <div class="login-item" onclick="redirect('/login')">
+                <i class="fa fa-user"></i><span>用户名登陆</span>
+            </div>
+            <div class="login-item" onclick="redirect()"><i class="fa fa-qq"></i><span>QQ登陆</span></div>
+            <div class="login-item" onclick="redirect()"><i class="fa fa-github"></i><span>GitHub登陆</span></div>
+            <div class="login-item" onclick="redirect()"><i class="fa fa-weibo"></i><span>微博登陆</span></div>
+        </div>
+
+        <!-- //checkbox -->
+        <button type="button" class="submit" onclick="login()">点击登陆</button>
+    </form>
+</div>
+<!-- //content -->
+
+<!-- copyright -->
+<div class="footer">
+    <p>Copyright &copy; 2023.Company name All rights reserved.</p>
+</div>
+<!-- //copyright -->
+
+<!-- Jquery -->
+<script src="/js/jquery-3.3.1.min.js"></script>
+<!-- //Jquery -->
+
+<!-- effect js -->
+<script src="/js/canva_moving_effect.js"></script>
+<!-- //effect js -->
+
+<script type="text/javascript" src="/js/layer/layer.js"></script>
+<script type="text/javascript" src="/js/axios.js"></script>
+<script type="text/javascript" src="/js/qs.js"></script>
+<script>
+
+    axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
+    axios.defaults.baseURL = 'http://localhost:9700';
+    axios.defaults.withCredentials = true;
+    axios.defaults.timeout = 5000;
+
+    let timer = null;
+    let count = 0;
+
+    function login() {
+        let email = document.querySelector("#email").value;
+        let code = document.querySelector("#code").value;
+
+        if (!email) {
+            layer.msg("请输入邮箱", {icon: 5});
+            return;
+        }
+
+        if (!code) {
+            layer.msg("请输入邮箱验证码", {icon: 5});
+            return;
+        }
+
+        let data = {
+            email: email,
+            code: code
+        };
+
+        axios.post('/login/email', Qs.stringify(data)).then(res => {
+            if (res.status !== 200) {
+                layer.msg("登录失败", {icon: 5});
+                return;
+            }
+            window.location.href = res.data['data'];
+        }).catch(err => {
+            layer.msg("登录失败", {icon: 5});
+            console.log(err);
+        })
+    }
+
+    function redirect(path) {
+        if (!path) {
+            layer.msg("该功能暂未开放", {icon: 5});
+            return;
+        }
+        window.location.href = path;
+    }
+
+    function sendEmailCode() {
+        let username = document.querySelector("#email").value;
+        if (!username) {
+            layer.msg("请输入用户名", {icon: 5});
+            return;
+        }
+        axios.get('/send-email-code?email=' + username).then(res => {
+            if (res.status !== 200) {
+                layer.msg("发送失败", {icon: 5});
+                return;
+            }
+            layer.msg("发送成功", {icon: 6});
+            count = 60;
+            timer = setInterval(function () {
+                let btn = document.querySelector(".submit");
+                count--;
+                if (count <= 0) {
+                    btn.innerText = "发送验证码";
+                    clearInterval(timer);
+                    return;
+                }
+                btn.innerText = count + "秒后重发";
+            }, 1000);
+        }).catch(err => {
+            layer.msg("发送失败", {icon: 5});
+            console.log(err);
+        })
+    }
+</script>
+</body>
+
+</html>
